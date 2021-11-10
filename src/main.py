@@ -20,7 +20,7 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
-# Handle/serialize errors like a JSON objectxxx
+# Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
@@ -30,11 +30,138 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+@app.route('/people', methods=['GET'])
+def get_people():
+    query_people = People.query.all()
+    query_people = list(map(lambda x: x.serialize(), query_people))
+    print(query_people)
+    response_body = {
+        "msg": "Hello, this is your GET /people response ",
+        "people": query_people
+    }
+    return jsonify(response_body), 200
+
+@app.route('/people/<int:id>', methods=['DELETE'])
+def delete_people(id):
+    people_delete = People.query.get(id)
+    if not people_delete:
+        response_body = {
+            "msg": "Hello, this is your DELETE /people response ",
+            "people": "Character not found, cannot be deleted"
+        }
+        return jsonify(response_body), 200        
+    db.session.delete(people_delete)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your DELETE /people response ",
+        "people": "Character deleted"
+    }
+    return jsonify(response_body), 200
+
+@app.route('/people', methods=['POST'])
+def post_people():
+    body = request.get_json()
+    print(body)
+    people = People(name=body['name'],homeworld=body['homeworld'])
+    planet = Planet(name=body['planet'])
+    db.session.add(people)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your POST /Character response "
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/planet', methods=['GET'])
+def get_planet():
+    query_planet = Planet.query.all()
+    query_planet = list(map(lambda x: x.serialize(), query_planet))
+    print(query_planet)
+    response_body = {
+        "msg": "Hello, this is your GET /Planet response ",
+        "planet": query_planet
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/planet/<int:id>', methods=['DELETE'])
+def delete_planet(id):
+    planet_delete = Planet.query.get(id)
+    if not planet_delete:
+        response_body = {
+            "msg": "Hello, this is your DELETE /planet response ",
+            "planet": "Planet not found, cannot be deleted"
+        }
+        return jsonify(response_body), 200        
+    db.session.delete(planet_delete)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your DELETE /planet response ",
+        "planet": "Planet deleted"
+    }
+    return jsonify(response_body), 200
+
+@app.route('/planet', methods=['POST'])
+def post_planet():
+    body = request.get_json()
+    planet = Planet(name=body['name'],density=body['density'],gravity=body['gravity'])
+    db.session.add(planet)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your POST /planet response "
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/vehicles', methods=['GET'])
+def get_vehicles():
+    query_vehicles = Vehicles.query.all()
+    query_vehicles = list(map(lambda x: x.serialize(), query_vehicles))
+    print(query_vehicles)
+    response_body = {
+        "msg": "Hello, this is your GET /vehicles response ",
+        "vehicles": query_vehicles
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/vehicles/<int:id>', methods=['DELETE'])
+def delete_vehicles(id):
+    vehicles_delete = Vehicles.query.get(id)
+    if not vehicles_delete:
+        response_body = {
+            "msg": "Hello, this is your DELETE /vehicles response ",
+            "vehicles": "Vehicle not found, cannot be deleted"
+        }
+        return jsonify(response_body), 200        
+    db.session.delete(vehicles_delete)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your DELETE /vehicles response ",
+        "vehicles": "Vehicle deleted"
+    }
+    return jsonify(response_body), 200      
+
+@app.route('/vehicles', methods=['POST'])
+def post_vehicles():
+    body = request.get_json()
+    vehicles = Vehicles(name=body['name'],model=body['model'],manufacturer=body['manufacturer'],pilots=body['pilots'])
+    db.session.add(vehicles)
+    db.session.commit()
+    response_body = {
+        "msg": "Hello, this is your POST /vehicles response "
+    }
+
+    return jsonify(response_body), 200  
+
+
 @app.route('/user', methods=['GET'])
 def handle_hello():
-
+    query_user = User.query.all()
+    query_user = list(map(lambda x: x.serialize(), query_user))
     response_body = {
-        "msg": "Hello, this is your GET /user response "
+        "msg": "Hello, this is your GET /user response ",
+        "users":query_user
     }
 
     return jsonify(response_body), 200
