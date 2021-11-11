@@ -2,12 +2,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class People(db.Model):
     __tablename__ = 'people'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     homeworld = db.Column(db.Integer, db.ForeignKey('planet.id'))
-    planet = db.relationship ('Planet', lazy=True)
+    # planet = db.relationship('Planet', lazy=True)
     people_favorites = db.relationship('Favoritespeople', backref="people", lazy=True)
 
     def __repr__(self):
@@ -24,8 +25,8 @@ class Planet(db.Model):
     __tablename__ = 'planet'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
-    density = db.Column(db.String(120), unique=True, nullable=False)
-    gravity = db.Column(db.String(120))
+    density = db.Column(db.String(120), unique=False, nullable=False)
+    gravity = db.Column(db.String(120), unique=False, nullable=False)
     planet_favorites = db.relationship('Favoritesplanet', backref="planet", lazy=True)
             
     def __repr__(self):

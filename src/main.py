@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Favoritespeople, Favoritesplanet, Favoritesvehicles, People, Planet, Vehicles
 #from models import Person
 
 app = Flask(__name__)
@@ -34,11 +34,11 @@ def sitemap():
 def get_people():
     query_people = People.query.all()
     query_people = list(map(lambda x: x.serialize(), query_people))
-    print(query_people)
     response_body = {
         "msg": "Hello, this is your GET /people response ",
         "people": query_people
     }
+
     return jsonify(response_body), 200
 
 @app.route('/people/<int:id>', methods=['DELETE'])
@@ -47,27 +47,25 @@ def delete_people(id):
     if not people_delete:
         response_body = {
             "msg": "Hello, this is your DELETE /people response ",
-            "people": "Character not found, cannot be deleted"
+            "people": "people no existe, no puede ser eliminado"
         }
         return jsonify(response_body), 200        
     db.session.delete(people_delete)
     db.session.commit()
     response_body = {
         "msg": "Hello, this is your DELETE /people response ",
-        "people": "Character deleted"
+        "people": "personaje eliminado"
     }
     return jsonify(response_body), 200
 
 @app.route('/people', methods=['POST'])
 def post_people():
     body = request.get_json()
-    print(body)
-    people = People(name=body['name'],homeworld=body['homeworld'])
-    planet = Planet(name=body['planet'])
+    people = People(name=body['name'], homeworld=body['homeworld'])
     db.session.add(people)
     db.session.commit()
     response_body = {
-        "msg": "Hello, this is your POST /Character response "
+        "msg": "Hello, this is your POST /people response "
     }
 
     return jsonify(response_body), 200
@@ -78,7 +76,7 @@ def get_planet():
     query_planet = list(map(lambda x: x.serialize(), query_planet))
     print(query_planet)
     response_body = {
-        "msg": "Hello, this is your GET /Planet response ",
+        "msg": "Hello, this is your GET /planet response ",
         "planet": query_planet
     }
 
@@ -90,14 +88,14 @@ def delete_planet(id):
     if not planet_delete:
         response_body = {
             "msg": "Hello, this is your DELETE /planet response ",
-            "planet": "Planet not found, cannot be deleted"
+            "planet": "planeta no existe, no puede ser eliminado"
         }
         return jsonify(response_body), 200        
     db.session.delete(planet_delete)
     db.session.commit()
     response_body = {
         "msg": "Hello, this is your DELETE /planet response ",
-        "planet": "Planet deleted"
+        "planet": "planeta eliminado"
     }
     return jsonify(response_body), 200
 
@@ -131,14 +129,14 @@ def delete_vehicles(id):
     if not vehicles_delete:
         response_body = {
             "msg": "Hello, this is your DELETE /vehicles response ",
-            "vehicles": "Vehicle not found, cannot be deleted"
+            "vehicles": "vehicles no existe, no puede ser eliminado"
         }
         return jsonify(response_body), 200        
     db.session.delete(vehicles_delete)
     db.session.commit()
     response_body = {
         "msg": "Hello, this is your DELETE /vehicles response ",
-        "vehicles": "Vehicle deleted"
+        "vehicles": "vehiculo eliminado"
     }
     return jsonify(response_body), 200      
 
